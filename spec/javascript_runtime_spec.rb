@@ -204,4 +204,14 @@ describe CldrPlurals::JavascriptRuntime do
       expect(rt.t(num)).to eq(23)
     end
   end
+
+  context 'with global variables already present' do
+    context = V8::Context.new
+    context.eval('v = 5')
+    context.eval(CldrPlurals::JavascriptRuntime.source)
+    it 'expects to not overwrite variables of the global scope' do
+      expect(context.eval('v')).to eq(5)
+    end
+  end
+
 end
