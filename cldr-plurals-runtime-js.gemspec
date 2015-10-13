@@ -16,5 +16,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'therubyracer', '0.12.0'
 
   s.require_path = 'lib'
-  s.files = Dir["{lib,spec}/**/*", "Gemfile", "History.txt", "README.md", "Rakefile", "cldr-plurals-runtime-js.gemspec"]
+  s.files = Dir["{lib,spec}/**/*", "Gemfile", "History.txt", "LICENSE.txt", "README.md", "Rakefile", "cldr-plurals-runtime-js.gemspec"]
 end
