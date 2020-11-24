@@ -3,7 +3,7 @@ cldr-plurals-runtime-js
 
 [![Build Status](https://travis-ci.org/camertron/cldr-plurals-runtime-js.svg?branch=master)](http://travis-ci.org/camertron/cldr-plurals-runtime-js)
 
-Ruby runtime methods for CLDR plural rules (see camertron/cldr-plurals).
+Javascript runtime methods for CLDR plural rules (see camertron/cldr-plurals).
 
 ## Installation
 
@@ -11,8 +11,8 @@ Ruby runtime methods for CLDR plural rules (see camertron/cldr-plurals).
 
 ## Usage
 
-```ruby
-require 'cldr-plurals/javascript_runtime'
+```javascript
+const runtime = require('cldr-plurals-runtime');
 ```
 
 ## Functionality
@@ -28,23 +28,10 @@ The CLDR data set contains [plural information](http://unicode.org/cldr/trac/bro
 | f      | visible fractional digits in n, with trailing zeros.           |
 | t      | visible fractional digits in n, without trailing zeros.        |
 
-cldr-plurals-runtime-js is an implementation of these calculations in Javascript, packaged as a rubygem. You can get the source code for the runtime by querying the `CldrPlurals::JavascriptRuntime` module:
+cldr-plurals-runtime-js is an implementation of these calculations in Javascript. Rules can be compiled into Javascript using the cldr-plurals rubygem:
 
 ```ruby
-CldrPlurals::JavascriptRuntime.source
-```
-
-The source code simply contains a single Javascript object. It isn't packaged as a CommonJs module or anything fancy like that - it's just a straight js object. This makes it easier to test in Ruby. Also, since all the users of this runtime currently just copy the source into larger projects, there's no need for a package. Let me know if you want one <3
-
-When evaluated inside a Javascript environment like V8 (via [therubyracer](https://github.com/cowboyd/therubyracer)), the runtime can be passed to [cldr-plurals](https://github.com/camertron/cldr-plurals) to determine the plural form for a number:
-
-```ruby
-require 'v8'
 require 'cldr-plurals'
-require 'cldr-plurals/javascript_runtime'
-
-context = V8::Context.new
-runtime = context.eval(CldrPlurals::JavascriptRuntime.source)
 
 rules = CldrPlurals::Compiler::RuleList.new(:ru).tap do |rule_list|
   rule_list.add_rule(:one, 'v = 0 and i % 10 = 1 and i % 100 != 11')
@@ -53,9 +40,14 @@ rules = CldrPlurals::Compiler::RuleList.new(:ru).tap do |rule_list|
 end
 
 js_code = rules.to_code(:javascript)
-js_obj = context.eval(js_code)
+```
 
-js_obj.call('3', runtime)  # => 'few'
+Once you've produced the Javascript code for the rule list, you can execute them like so:
+
+```javascript
+const runtime = require('cldr-plurals-runtime');
+const rule = function() { ... }  // code generated above by cldr-plurals
+console.log(rule('3', runtime))  // => "few"
 ```
 
 ## Requirements
@@ -64,7 +56,7 @@ No external requirements.
 
 ## Running Tests
 
-`bundle exec rake` should do the trick. Alternatively you can run `bundle exec rspec`, which does the same thing.
+`jasmine-node spec/` should do the trick.
 
 ## Authors
 
